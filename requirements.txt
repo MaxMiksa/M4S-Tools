@@ -1,0 +1,19 @@
+# M4S 文件处理工具依赖项
+# 注意：此工具需要 FFmpeg。程序首次运行时会自动检测，如未安装可自动下载安装。
+
+# Python 标准库已包含所需模块：
+# - tkinter (GUI)
+# - subprocess (调用 FFmpeg)
+# - pathlib (路径处理)
+# - tempfile (临时文件)
+# - urllib.request (下载 FFmpeg)
+# - zipfile (解压 FFmpeg)
+# - winreg (Windows 注册表操作，用于添加 PATH)
+
+# 如需打包为可执行文件，可以使用：
+# pyinstaller>=5.0.0
+
+# 打包命令：
+# 方式一：双击运行 build_exe.bat（推荐）
+# 方式二：运行 python build_exe.py
+# 方式三：手动执行 pyinstaller --onefile --windowed --name "M4S处理工具" main.py
