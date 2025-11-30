@@ -25,8 +25,8 @@
 
 ### 推荐：使用打包好的 EXE 文件（下载即用）
 
-1. 下载界面右侧`Release`中的 `M4S-Tools.exe`
-2. 运行 `M4S-Tools.exe`  
+1. 下载本界面右侧`Release`中的 `M4S Merger Tools.exe`
+2. 运行 `M4S Merger Tools.exe`  
    注意：首次运行需要网络连接（自动下载 FFmpeg）
 
 <details>
@@ -95,7 +95,7 @@
 ## 其他
 
 <details>
-<summary>打包为可执行文件</summary>
+<summary>为可执行文件</summary>
 
 程序提供了三种打包方式，可以将程序打包为独立的 `.exe` 文件，无需安装 Python 即可运行。
 
