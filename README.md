@@ -1,4 +1,4 @@
-# M4S 合并工具 | M4S Merger Tools v1.0.0
+# M4S 合并工具 v1.0.0 | [For English](https://github.com/MaxMiksa/M4S-Merger-Tools/blob/main/README-en.md)
 
 通过图形界面选择文件，一键完成 M4S 视频片段合并、音频片段合并以及最终的音视频混流工作。  
 一款适用于 Windows 平台的桌面 GUI 应用程序，用于处理 M4S 文件（通常来自哔哩哔哩/Bilibili流媒体下载）。
