@@ -6,6 +6,8 @@
 <img src="presentation/Presentation%20video%20-%20M4S%20Merger%20Tools%20v1.0.0.gif" 
      alt="M4S Merger Tools 演示动画" 
      width="1000"/>
+[更清晰的视频](https://github.com/MaxMiksa/M4S-Merger-Tools/blob/main/presentation/Presentation%20video%20-%20M4S%20Merger%20Tools%20v1.0.0.MP4)
+
 
 ## 功能特性
 
