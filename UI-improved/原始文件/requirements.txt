@@ -1,9 +1,0 @@
-﻿# M4S Merger Tools v1.0.0 依赖说明
-# - 运行环境：Python 3.7 及以上版本
-# - 外部工具：FFmpeg（程序会在首次运行时自动检测并可选下载安装）
-
-# 必需的第三方库（GUI 使用 customtkinter）
-customtkinter>=5.2.0
-
-# 可选：需要将项目打包为 EXE 时安装 PyInstaller
-pyinstaller>=6.0.0
