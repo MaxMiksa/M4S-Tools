@@ -2,7 +2,10 @@
 
 A desktop GUI application for Windows that provides a one-click solution for merging M4S video segments, audio segments, and performing the final audio-video muxing. This tool is designed primarily for handling M4S files (typically sourced from Bilibili/B站 streams).
 
-<img width="679" height="552" alt="20251129_180902_811" src="https://github.com/user-attachments/assets/02b1319e-4321-4a9e-b941-c0efbbd6deaa" />
+<img src="presentation/Presentation%20video%20-%20M4S%20Merger%20Tools%20v1.0.0.gif" 
+     alt="M4S Merger Tools 演示动画" 
+     width="1000"/>
+[Clearer Video of this](https://github.com/MaxMiksa/M4S-Merger-Tools/blob/main/presentation/Presentation%20video%20-%20M4S%20Merger%20Tools%20v1.0.0.MP4)
 
 ## Key Features
 
