@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-M4S 文件处理工具 - GUI 界面 (Final Perfect Version)
-修复: 弹窗语言跟随、按钮逻辑、启动阶段双语提示
+M4S 文件处理工具 - GUI 界面 (Final Version)
+1. 字体: Microsoft YaHei UI
+2. 布局: 顶部左右对称 (深色模式/语言切换)
+3. 窗口: 960x840 (增高20%)
+4. 图标: 仅保留 Logo，移除按钮图标
 """
 
 import tkinter as tk
@@ -13,23 +16,20 @@ import os
 import sys
 from pathlib import Path
 
-# --- 启动阶段异常双语提示 ---
 try:
     import customtkinter as ctk
 except ImportError:
     import tkinter.messagebox
     root = tk.Tk()
     root.withdraw()
-    tkinter.messagebox.showerror(
-        "Error / 错误", 
-        "Missing dependency / 缺少必要依赖:\n\nPlease run / 请运行:\npip install customtkinter"
-    )
+    tkinter.messagebox.showerror("Error", "缺少依赖: 请运行 pip install customtkinter")
     sys.exit(1)
 
 try:
     from m4s_processor import M4SProcessor
     from ffmpeg_installer import FFmpegInstaller
 except ImportError:
+    # 简单的错误处理，防止直接闪退
     sys.exit(1)
 
 # --- 翻译字典 ---
@@ -49,20 +49,24 @@ TRANS = {
         "btn_video": "Video Only",
         "btn_audio": "Audio Only",
         "log_title": "PROCESS LOGS",
-        "theme_dark": "Dark",
-        "theme_light": "Light",
-        
-        # 修正：在英文界面，按钮应该显示“中文”供用户切换
-        "lang_btn": "中文", 
-        
-        # 运行时提示 (Follows Language)
-        "processing": "Processing...",
+        "ready": "System initialized. Ready.",
         "success": "Success",
         "error": "Error",
         "saved": "File saved to:",
-        "no_video": "Please select video files first.",
-        "no_audio": "Please select audio files first.",
-        "need_both": "Need both video and audio files.",
+        "processing": "Processing...",
+        "theme_dark": "Dark",
+        "theme_light": "Light",
+        "lang_btn": "English",
+        # 安装相关
+        "install_title": "Install FFmpeg",
+        "install_desc": "FFmpeg is required for processing media.",
+        "install_path": "Install Path:",
+        "install_browse": "Browse",
+        "install_start": "Install Now",
+        "install_status_ready": "Ready to install",
+        "install_status_down": "Downloading...",
+        "install_status_ext": "Extracting...",
+        "install_done": "Installation complete! Please restart."
     },
     "zh": {
         "title": "M4S 合并工具",
@@ -79,54 +83,61 @@ TRANS = {
         "btn_video": "仅视频",
         "btn_audio": "仅音频",
         "log_title": "处理日志",
-        "theme_dark": "深色模式",
-        "theme_light": "浅色模式",
-        
-        # 修正：在中文界面，按钮应该显示“English”供用户切换
-        "lang_btn": "English",
-        
-        # 运行时提示 (跟随语言)
-        "processing": "处理中...",
+        "ready": "系统已就绪。",
         "success": "成功",
         "error": "错误",
         "saved": "文件已保存至:",
-        "no_video": "请先选择视频文件。",
-        "no_audio": "请先选择音频文件。",
-        "need_both": "需要同时选择视频和音频文件。",
+        "processing": "处理中...",
+        "theme_dark": "深色模式",
+        "theme_light": "浅色模式",
+        "lang_btn": "中文",
+        # 安装相关
+        "install_title": "安装 FFmpeg",
+        "install_desc": "本工具需要 FFmpeg 组件才能运行。",
+        "install_path": "安装位置:",
+        "install_browse": "浏览",
+        "install_start": "立即安装",
+        "install_status_ready": "准备安装",
+        "install_status_down": "正在下载...",
+        "install_status_ext": "正在解压...",
+        "install_done": "安装完成！请重启程序。"
     }
 }
 
-# 颜色配置
+# 颜色配置 (适应深浅模式)
 COLORS = {
-    "bg": ("#f1f5f9", "#020617"),          
-    "card": ("#ffffff", "#0f172a"),        
-    "card_border": ("#cbd5e1", "#1e293b"), 
-    "input_bg": ("#e2e8f0", "#1e293b"),    
-    "text_main": ("#0f172a", "#f8fafc"),   
-    "text_body": ("#64748b", "#94a3b8"),   
-    "brand": ("#0ea5e9", "#0ea5e9"),       
-    "brand_hover": ("#0284c7", "#0284c7"), 
-    "terminal_bg": ("#000000", "#000000"), 
-    "terminal_fg": ("#22c55e", "#22c55e")  
+    "bg": ("#f1f5f9", "#020617"),          # 浅灰 / 深蓝黑
+    "card": ("#ffffff", "#0f172a"),        # 白 / 深蓝灰
+    "card_border": ("#cbd5e1", "#1e293b"), # 边框
+    "input_bg": ("#e2e8f0", "#1e293b"),    # 输入框背景
+    "text_main": ("#0f172a", "#f8fafc"),   # 主文字
+    "text_body": ("#64748b", "#94a3b8"),   # 次要文字
+    "brand": ("#0ea5e9", "#0ea5e9"),       # 品牌蓝
+    "brand_hover": ("#0284c7", "#0284c7"), # 悬停蓝
+    "terminal_bg": ("#000000", "#000000"), # 日志背景(黑)
+    "terminal_fg": ("#22c55e", "#22c55e")  # 日志文字(绿)
 }
 
 class M4SProcessorApp:
     def __init__(self):
+        # 默认外观
         ctk.set_appearance_mode("Dark")
         ctk.set_default_color_theme("blue")
         
         self.root = ctk.CTk()
-        # 默认语言 (Default Language)
-        self.lang = "zh" 
+        self.lang = "zh"
         self.current_theme = "Dark"
         self.t = TRANS[self.lang]
         
         self.root.title("M4S Merger GUI")
+        
+        # 窗口尺寸 (960x840)
         self.root.geometry("960x840") 
         self.root.minsize(900, 700)
+        
         self.root.configure(fg_color=COLORS["bg"])
         
-        # 字体配置 (Microsoft YaHei UI)
+        # --- 字体配置 (微软雅黑 UI) ---
         FONT_NAME = "Microsoft YaHei UI"
         self.font_title = (FONT_NAME, 32, "bold") 
         self.font_subtitle = (FONT_NAME, 16)
@@ -140,9 +151,10 @@ class M4SProcessorApp:
         self.output_dir = ""
         self.is_processing = False
         
+        # UI 引用字典
         self.ui_refs = {} 
 
-        # 检查 FFmpeg (如果未安装，直接显示双语安装弹窗)
+        # 检查 FFmpeg
         if not M4SProcessor.check_ffmpeg_available():
             self.root.withdraw()
             self.install_ffmpeg_dialog()
@@ -151,7 +163,6 @@ class M4SProcessorApp:
             self.setup_ui()
 
     def toggle_language(self):
-        # 切换逻辑
         self.lang = "en" if self.lang == "zh" else "zh"
         self.t = TRANS[self.lang]
         self.refresh_text()
@@ -166,7 +177,7 @@ class M4SProcessorApp:
         self.refresh_text()
 
     def refresh_text(self):
-        """刷新所有界面文本"""
+        """刷新所有文本"""
         t = self.t
         # 顶部按钮
         theme_text = t["theme_dark"] if self.current_theme == "Dark" else t["theme_light"]
@@ -206,7 +217,7 @@ class M4SProcessorApp:
         top_bar = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         top_bar.pack(fill="x", pady=(0, 20))
         
-        # 左侧：主题切换
+        # 左侧：主题切换 (纯文字)
         self.ui_refs["theme_btn"] = ctk.CTkButton(
             top_bar, text="", width=80, height=32,
             fg_color=COLORS["input_bg"], hover_color=COLORS["card_border"],
@@ -215,7 +226,7 @@ class M4SProcessorApp:
         )
         self.ui_refs["theme_btn"].pack(side="left", anchor="n")
 
-        # 右侧：语言切换
+        # 右侧：语言切换 (纯文字)
         self.ui_refs["lang_btn"] = ctk.CTkButton(
             top_bar, text="", width=80, height=32,
             fg_color=COLORS["input_bg"], hover_color=COLORS["card_border"],
@@ -231,6 +242,7 @@ class M4SProcessorApp:
         icon_box = ctk.CTkFrame(center_head, fg_color=COLORS["card_border"], corner_radius=12, width=48, height=48)
         icon_box.pack(pady=(0, 5))
         icon_box.pack_propagate(False)
+        # 这里的 Emoji 可以保留作为 Logo，或者也去掉
         ctk.CTkLabel(icon_box, text="📚", font=("Segoe UI Emoji", 24)).place(relx=0.5, rely=0.5, anchor="center")
         
         self.ui_refs["title"] = ctk.CTkLabel(center_head, text="", font=self.font_title, text_color=COLORS["text_main"])
@@ -326,6 +338,7 @@ class M4SProcessorApp:
         self.ui_refs[f"{type_key}_header"] = lbl
         
         cmd_clear = self.clear_video_files if type_key == "video" else self.clear_audio_files
+        # 移除图标，改用文字 "x"
         ctk.CTkButton(
             top, text="×", width=30, height=30, fg_color="transparent", 
             hover_color=COLORS["card_border"], text_color=COLORS["text_body"], 
@@ -437,15 +450,12 @@ class M4SProcessorApp:
 
     def _run_task(self, name_key, task_func):
         if self.is_processing: return
-        
-        # 修正：使用 self.t[] 动态获取当前语言的错误提示
         if "video" in name_key.lower() and not self.video_files:
-            messagebox.showwarning(self.t["error"], self.t["no_video"])
+            messagebox.showwarning(self.t["error"], "No Video Files")
             return
         if "audio" in name_key.lower() and not self.audio_files:
-            messagebox.showwarning(self.t["error"], self.t["no_audio"])
+            messagebox.showwarning(self.t["error"], "No Audio Files")
             return
-            
         if not self.output_dir: self.output_dir = os.getcwd()
 
         self.is_processing = True
@@ -466,7 +476,6 @@ class M4SProcessorApp:
         self.progress_bar.set(0)
         if success:
             self.log(f"{self.t['success']}! {msg}")
-            # 修正：弹窗使用动态语言
             messagebox.showinfo(self.t["success"], f"{self.t['saved']}\n{msg}")
             try: os.startfile(os.path.dirname(msg))
             except: pass
@@ -478,36 +487,36 @@ class M4SProcessorApp:
     def merge_audio(self): self._run_task("audio", lambda: self.processor.merge_audio_segments(self.audio_files, self.output_dir))
     def merge_av_direct(self): 
         if not self.video_files or not self.audio_files:
-             # 修正：使用动态语言提示
-             messagebox.showwarning(self.t["error"], self.t["need_both"])
+             messagebox.showwarning(self.t["error"], "Need both video and audio files")
              return
         self._run_task("full", lambda: self.processor.process_all(self.video_files, self.audio_files, self.output_dir))
 
-    # --- 安装弹窗 (强制双语，因为此时用户无法切换语言) ---
+    # --- 完整的安装弹窗逻辑 ---
     def install_ffmpeg_dialog(self):
         dialog = ctk.CTkToplevel(self.root)
-        dialog.title("Install FFmpeg / 安装 FFmpeg")
+        dialog.title(self.t["install_title"])
         dialog.geometry("600x350")
         
+        # 居中弹窗
         self.root.update_idletasks()
         x = self.root.winfo_x() + (self.root.winfo_width() // 2) - 300
         y = self.root.winfo_y() + (self.root.winfo_height() // 2) - 175
         dialog.geometry(f"+{x}+{y}")
         dialog.lift()
         dialog.focus_force()
-        dialog.grab_set() 
+        dialog.grab_set() # 模态窗口
 
         content = ctk.CTkFrame(dialog, fg_color="transparent")
         content.pack(fill="both", expand=True, padx=30, pady=30)
         
-        # 强制双语显示
-        ctk.CTkLabel(content, text="Install FFmpeg / 安装 FFmpeg", font=self.font_title, text_color=COLORS["text_main"]).pack(pady=(0, 10))
-        ctk.CTkLabel(content, text="FFmpeg is required. / 本工具需要 FFmpeg 组件。", font=self.font_body, text_color=COLORS["text_body"]).pack(pady=(0, 20))
+        ctk.CTkLabel(content, text=self.t["install_title"], font=self.font_title, text_color=COLORS["text_main"]).pack(pady=(0, 10))
+        ctk.CTkLabel(content, text=self.t["install_desc"], font=self.font_body, text_color=COLORS["text_body"]).pack(pady=(0, 20))
         
+        # 路径选择
         path_frame = ctk.CTkFrame(content, fg_color="transparent")
         path_frame.pack(fill="x", pady=10)
         
-        ctk.CTkLabel(path_frame, text="Path / 路径:", font=self.font_body, text_color=COLORS["text_main"]).pack(side="left")
+        ctk.CTkLabel(path_frame, text=self.t["install_path"], font=self.font_body, text_color=COLORS["text_main"]).pack(side="left")
         
         install_path_var = tk.StringVar(value=str(Path.home() / "ffmpeg"))
         entry = ctk.CTkEntry(path_frame, textvariable=install_path_var, font=self.font_body)
@@ -517,15 +526,17 @@ class M4SProcessorApp:
             d = filedialog.askdirectory()
             if d: install_path_var.set(d)
         
-        ctk.CTkButton(path_frame, text="Browse / 浏览", width=80, command=browse).pack(side="right")
+        ctk.CTkButton(path_frame, text=self.t["install_browse"], width=80, command=browse).pack(side="right")
         
+        # 进度条
         progress_bar = ctk.CTkProgressBar(content, height=10)
         progress_bar.pack(fill="x", pady=20)
         progress_bar.set(0)
         
-        status_lbl = ctk.CTkLabel(content, text="Ready / 准备就绪", font=self.font_body, text_color=COLORS["text_body"])
+        status_lbl = ctk.CTkLabel(content, text=self.t["install_status_ready"], font=self.font_body, text_color=COLORS["text_body"])
         status_lbl.pack()
         
+        # 安装按钮
         def start_install():
             install_btn.configure(state="disabled")
             target_dir = Path(install_path_var.get())
@@ -533,6 +544,7 @@ class M4SProcessorApp:
             def run():
                 try:
                     def cb(stage, curr, total, msg):
+                        # 更新UI
                         val = 0
                         if total > 0: val = curr / total
                         self.root.after(0, lambda: progress_bar.set(val))
@@ -540,16 +552,16 @@ class M4SProcessorApp:
                     
                     FFmpegInstaller.install_ffmpeg(target_dir, cb)
                     
-                    self.root.after(0, lambda: status_lbl.configure(text="Complete! / 完成!"))
-                    self.root.after(0, lambda: messagebox.showinfo("Done", "Installation complete. Please restart.\n安装完成，请重启程序。"))
-                    self.root.after(0, lambda: sys.exit(0))
+                    self.root.after(0, lambda: status_lbl.configure(text=self.t["install_done"]))
+                    self.root.after(0, lambda: messagebox.showinfo("Done", self.t["install_done"]))
+                    self.root.after(0, lambda: sys.exit(0)) # 重启
                 except Exception as e:
                     self.root.after(0, lambda: messagebox.showerror("Error", str(e)))
                     self.root.after(0, lambda: install_btn.configure(state="normal"))
             
             threading.Thread(target=run, daemon=True).start()
             
-        install_btn = ctk.CTkButton(content, text="Install Now / 立即安装", height=40, font=self.font_btn, command=start_install)
+        install_btn = ctk.CTkButton(content, text=self.t["install_start"], height=40, font=self.font_btn, command=start_install)
         install_btn.pack(pady=20)
         
         self.root.wait_window(dialog)
