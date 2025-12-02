@@ -135,7 +135,6 @@ class M4SProcessorApp:
         ctk.set_default_color_theme("blue")
         
         self.root = ctk.CTk()
-        # 默认语言
         self.lang = "zh" 
         self.current_theme = "Dark"
         self.t = TRANS[self.lang]
@@ -162,13 +161,19 @@ class M4SProcessorApp:
         
         self.ui_refs = {} 
 
-        # 检查 FFmpeg
+        # ⭐ 关键修改：先启动主窗口，然后延迟检查 FFmpeg
+        self.root.after(100, self.check_and_setup)
+
+    def check_and_setup(self):
+        """检查 FFmpeg 并设置 UI"""
         if not M4SProcessor.check_ffmpeg_available():
-            self.root.withdraw()
+            print("[安装/Install] FFmpeg 未安装，显示安装对话框 / FFmpeg not installed, showing installation dialog")
             self.install_ffmpeg_dialog()
         else:
+            print("[初始化/Init] FFmpeg 已安装，初始化处理器 / FFmpeg installed, initializing processor")
             self.processor = M4SProcessor(check_ffmpeg=False)
             self.setup_ui()
+
 
     def toggle_language(self):
         self.lang = "en" if self.lang == "zh" else "zh"
@@ -535,9 +540,10 @@ class M4SProcessorApp:
         dialog.title("Install FFmpeg / 安装 FFmpeg")
         dialog.geometry("600x350")
         
+        # 居中显示
         self.root.update_idletasks()
-        x = self.root.winfo_x() + (self.root.winfo_width() // 2) - 300
-        y = self.root.winfo_y() + (self.root.winfo_height() // 2) - 175
+        x = (self.root.winfo_screenwidth() // 2) - 300
+        y = (self.root.winfo_screenheight() // 2) - 175
         dialog.geometry(f"+{x}+{y}")
         dialog.lift()
         dialog.focus_force()
@@ -546,14 +552,16 @@ class M4SProcessorApp:
         content = ctk.CTkFrame(dialog, fg_color="transparent")
         content.pack(fill="both", expand=True, padx=30, pady=30)
         
-        # 强制双语显示
-        ctk.CTkLabel(content, text="Install FFmpeg / 安装 FFmpeg", font=self.font_title, text_color=COLORS["text_main"]).pack(pady=(0, 10))
-        ctk.CTkLabel(content, text="FFmpeg is required. / 本工具需要 FFmpeg 组件。", font=self.font_body, text_color=COLORS["text_body"]).pack(pady=(0, 20))
+        ctk.CTkLabel(content, text="Install FFmpeg / 安装 FFmpeg", 
+                    font=self.font_title, text_color=COLORS["text_main"]).pack(pady=(0, 10))
+        ctk.CTkLabel(content, text="FFmpeg is required. / 本工具需要 FFmpeg 组件。", 
+                    font=self.font_body, text_color=COLORS["text_body"]).pack(pady=(0, 20))
         
         path_frame = ctk.CTkFrame(content, fg_color="transparent")
         path_frame.pack(fill="x", pady=10)
         
-        ctk.CTkLabel(path_frame, text="Path / 路径:", font=self.font_body, text_color=COLORS["text_main"]).pack(side="left")
+        ctk.CTkLabel(path_frame, text="Path / 路径:", 
+                    font=self.font_body, text_color=COLORS["text_main"]).pack(side="left")
         
         install_path_var = tk.StringVar(value=str(Path.home() / "ffmpeg"))
         entry = ctk.CTkEntry(path_frame, textvariable=install_path_var, font=self.font_body)
@@ -569,36 +577,72 @@ class M4SProcessorApp:
         progress_bar.pack(fill="x", pady=20)
         progress_bar.set(0)
         
-        status_lbl = ctk.CTkLabel(content, text="Ready / 准备就绪", font=self.font_body, text_color=COLORS["text_body"])
+        status_lbl = ctk.CTkLabel(content, text="Ready / 准备就绪", 
+                                font=self.font_body, text_color=COLORS["text_body"])
         status_lbl.pack()
         
         def start_install():
+            print("[安装/Install] 开始安装 FFmpeg... / Starting FFmpeg installation...")
             install_btn.configure(state="disabled")
             target_dir = Path(install_path_var.get())
             
             def run():
                 try:
                     def cb(stage, curr, total, msg):
+                        # ⭐ 修改：使用线程安全的方式更新 UI
                         val = 0
-                        if total > 0: val = curr / total
-                        self.root.after(0, lambda: progress_bar.set(val))
-                        self.root.after(0, lambda: status_lbl.configure(text=msg))
+                        if total > 0: 
+                            val = curr / total
+                        
+                        # 使用 dialog 而不是 self.root
+                        dialog.after(0, lambda v=val, m=msg: update_ui(v, m))
                     
+                    def update_ui(val, msg):
+                        """在主线程中更新 UI"""
+                        try:
+                            progress_bar.set(val)
+                            status_lbl.configure(text=msg)
+                            print(f"[安装进度/Progress] {msg}")
+                        except Exception as e:
+                            print(f"[UI更新错误/UI Update Error] {e}")
+                    
+                    print(f"[安装/Install] 目标目录 / Target directory: {target_dir}")
                     FFmpegInstaller.install_ffmpeg(target_dir, cb)
                     
-                    self.root.after(0, lambda: status_lbl.configure(text="Complete! / 完成!"))
-                    self.root.after(0, lambda: messagebox.showinfo("Done", "Installation complete. Please restart.\n安装完成，请重启程序。"))
-                    self.root.after(0, lambda: sys.exit(0))
+                    dialog.after(0, lambda: status_lbl.configure(text="Complete! / 完成!"))
+                    dialog.after(0, lambda: show_success_and_restart(dialog))
+                    print("[安装/Install] 安装完成 / Installation completed")
+                    
                 except Exception as e:
-                    self.root.after(0, lambda: messagebox.showerror("Error", str(e)))
-                    self.root.after(0, lambda: install_btn.configure(state="normal"))
+                    error_msg = f"安装失败 / Installation failed:\n{str(e)}"
+                    print(f"[错误/Error] {error_msg}")
+                    print(f"[错误详情/Error Details] {traceback.format_exc()}")
+                    dialog.after(0, lambda: show_error_and_enable(error_msg))
             
+            def show_success_and_restart(dlg):
+                messagebox.showinfo("Done", 
+                                "Installation complete. Please restart.\n安装完成,请重启程序。",
+                                parent=dlg)
+                sys.exit(0)
+            
+            def show_error_and_enable(msg):
+                messagebox.showerror("Error", msg, parent=dialog)
+                install_btn.configure(state="normal")
+            
+            print("[安装/Install] 启动安装线程 / Starting installation thread...")
             threading.Thread(target=run, daemon=True).start()
-            
-        install_btn = ctk.CTkButton(content, text="Install Now / 立即安装", height=40, font=self.font_btn, command=start_install)
+        
+        install_btn = ctk.CTkButton(
+            content, 
+            text="Install Now / 立即安装", 
+            height=40, 
+            font=self.font_btn, 
+            command=start_install
+        )
         install_btn.pack(pady=20)
         
-        self.root.wait_window(dialog)
+        dialog.protocol("WM_DELETE_WINDOW", lambda: sys.exit(0))
+
 
     def run(self):
         self.root.update_idletasks()
