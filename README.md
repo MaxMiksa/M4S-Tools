@@ -1,4 +1,4 @@
-# M4S 合并工具 v1.1.0 | [For English](https://github.com/MaxMiksa/M4S-Merger-Tools/blob/main/README-en.md)
+# M4S 合并工具 v1.2.0 | [For English](https://github.com/MaxMiksa/M4S-Merger-Tools/blob/main/README-en.md)
 
 ✅ **GUI界面，exe文件点开即用！ 无需预安装FFmpeg、更无需使用cmd！**  ✅  
 
@@ -7,13 +7,13 @@
 
 <div align="center">
     <!-- 左侧图片 -->
-    <img src="Presentation%20Videos/v1.1.0/ScreenShot%201%20-%20M4S%20Merger%20Tools%20v1.1.0.png" 
-     alt="M4S Merger Tools v1.1.0 " 
+    <img src="Presentation%20Videos/v1.2.0/ScreenShot%201%20-%20M4S%20Merger%20Tools%20v1.2.0.png" 
+     alt="M4S Merger Tools v1.2.0 " 
      width="400"/>
     &nbsp;
     <!-- 右侧图片 -->
-    <img src="Presentation%20Videos/v1.1.0/ScreenShot%202%20-%20M4S%20Merger%20Tools%20v1.1.0.png" 
-     alt="M4S Merger Tools v1.1.0 " 
+    <img src="Presentation%20Videos/v1.2.0/ScreenShot%202%20-%20M4S%20Merger%20Tools%20v1.2.0.png" 
+     alt="M4S Merger Tools v1.2.0 " 
      width="400"/>
 </div>
 
@@ -32,15 +32,15 @@
 
 ## 使用 （exe文件点开即用）
 
-<img src="Presentation%20Videos/v1.1.0/Presentation%20video%20-%20M4S%20Merger%20Tools%20v1.1.0.gif" 
-     alt="M4S Merger Tools v1.1.0 演示动画" 
+<img src="Presentation%20Videos/v1.2.0/Presentation%20video%20-%20M4S%20Merger%20Tools%20v1.2.0.gif" 
+     alt="M4S Merger Tools v1.2.0 演示动画" 
      width="1050"/>
 
 ### 基本操作流程
 
 1. **选择视频文件**：点击"选择视频文件"按钮，选择需要合并的 M4S 视频片段
 2. **选择音频文件**：点击"选择音频文件"按钮，选择需要合并的 M4S 音频片段
-3. **选择输出目录**：点击"选择输出目录"按钮，选择结果文件的保存位置
+3. **选择输出目录**：点击“选择输出目录”按钮，选择结果文件的保存位置（若跳过，此步骤将默认保存到用户桌面）
 4. **执行处理**：
    - **合并视频**：仅合并视频片段
    - **合并音频**：仅合并音频片段
@@ -48,9 +48,11 @@
 
 ### 输出文件说明
 
-- `merged_video.mp4`：合并后的视频文件
-- `merged_audio.mp4`：合并后的音频文件
-- `final_output.mp4`：最终混流后的完整视频文件（使用一键处理时生成）
+所有导出文件默认附带“YYYY-MM-DD_HH-MM-SS”（24 小时制，精确到秒）的时间戳，避免多次操作被覆盖：
+
+- `Merged_Video_YYYY-MM-DD_HH-MM-SS.mp4`：合并后的视频文件
+- `Merged_Audio_YYYY-MM-DD_HH-MM-SS.mp4`：合并后的音频文件
+- `Muxed_Output_YYYY-MM-DD_HH-MM-SS.mp4`：混流得到的最终文件。混流过程所需的中间文件会存放在临时目录中，输出文件夹中只会留下这一份成品。
 
 ## 系统要求
 

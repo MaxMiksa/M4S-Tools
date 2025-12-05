@@ -43,7 +43,7 @@ TRANS = {
         "placeholder": "Click to select files...",
         "select_btn": "Select Files",
         "output_label": "Output:",
-        "output_auto": "Auto (Current Directory)",
+        "output_auto": "Desktop (Default)",
         "change_path": "Change Path",
         "format_hint": "Format: Copy Codec (Fast)",
         
@@ -82,7 +82,7 @@ TRANS = {
         "placeholder": "点击选择文件...",
         "select_btn": "选择文件",
         "output_label": "输出路径:",
-        "output_auto": "自动 (当前目录)",
+        "output_auto": "桌面 (默认)",
         "change_path": "更改路径",
         "format_hint": "格式: 复制流 (无损极速)",
         
@@ -156,7 +156,7 @@ class M4SProcessorApp:
         
         self.video_files = []
         self.audio_files = []
-        self.output_dir = ""
+        self.output_dir = self._get_default_output_dir()
         self.is_processing = False
         
         self.ui_refs = {} 
@@ -432,6 +432,13 @@ class M4SProcessorApp:
         self.log_text.pack(fill="both", expand=True, padx=5, pady=(0, 5))
         self.log_text.configure(state="disabled")
 
+    def _get_default_output_dir(self) -> str:
+        """Return the user's Desktop path when available, otherwise fallback to CWD."""
+        desktop = Path.home() / "Desktop"
+        if desktop.exists():
+            return str(desktop)
+        return os.getcwd()
+
     def _update_path_label(self):
         prefix = self.t["output_label"]
         val = self.output_dir if self.output_dir else self.t["output_auto"]
@@ -482,7 +489,9 @@ class M4SProcessorApp:
             messagebox.showwarning(self.t["error"], self.t["no_audio"])
             return
             
-        if not self.output_dir: self.output_dir = os.getcwd()
+        if not self.output_dir:
+            self.output_dir = self._get_default_output_dir()
+            self._update_path_label()
 
         self.is_processing = True
         self.progress_bar.start()
@@ -519,18 +528,28 @@ class M4SProcessorApp:
              
         # 修改：分步处理并记录日志
         def full_task():
-            # 1. 视频
-            v_path = self.processor.merge_video_segments(self.video_files, self.output_dir)
-            self.root.after(0, lambda: self.log(self.t["log_step_v_end"]))
-            
-            # 2. 音频
-            a_path = self.processor.merge_audio_segments(self.audio_files, self.output_dir)
-            self.root.after(0, lambda: self.log(self.t["log_step_a_end"]))
-            
-            # 3. 混流
-            self.root.after(0, lambda: self.log(self.t["log_step_m_start"]))
-            final_path = self.processor.merge_av(v_path, a_path, self.output_dir)
-            return final_path
+            import tempfile
+
+            with tempfile.TemporaryDirectory() as temp_dir:
+                if len(self.video_files) > 1:
+                    v_path = self.processor.merge_video_segments(
+                        self.video_files, temp_dir, output_name="temp_video.mp4"
+                    )
+                    self.root.after(0, lambda: self.log(self.t["log_step_v_end"]))
+                else:
+                    v_path = self.video_files[0]
+                
+                if len(self.audio_files) > 1:
+                    a_path = self.processor.merge_audio_segments(
+                        self.audio_files, temp_dir, output_name="temp_audio.mp4"
+                    )
+                    self.root.after(0, lambda: self.log(self.t["log_step_a_end"]))
+                else:
+                    a_path = self.audio_files[0]
+                
+                self.root.after(0, lambda: self.log(self.t["log_step_m_start"]))
+                final_path = self.processor.merge_av(v_path, a_path, self.output_dir)
+                return final_path
 
         self._run_task("full", full_task)
 

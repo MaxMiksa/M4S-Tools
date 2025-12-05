@@ -9,6 +9,7 @@ import subprocess
 import os
 import tempfile
 import traceback
+from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 
@@ -94,7 +95,30 @@ class M4SProcessor:
         except Exception as e:
             raise RuntimeError(f"创建文件列表失败 / Failed to create file list: {str(e)}")
     
-    def merge_video_segments(self, video_files: List[str], output_dir: str) -> str:
+    def _timestamp_str(self) -> str:
+        """Generate a filesystem-friendly timestamp accurate to seconds."""
+        return datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    
+    def _generate_output_name(self, prefix: str, extension: str = ".mp4") -> str:
+        """Compose a default output filename using the expected prefix and timestamp."""
+        ext = extension if extension.startswith(".") else f".{extension}"
+        return f"{prefix}_{self._timestamp_str()}{ext}"
+
+    def _prepare_stream_for_mux(self, files: List[str], temp_dir: str, is_video: bool) -> str:
+        """
+        Prepare a stream for muxing: reuse the single original file or merge segments
+        inside a temporary directory so that no intermediate artifacts remain in the
+        user's chosen output location.
+        """
+        if not files:
+            raise ValueError("Stream list is empty / 流列表为空")
+        if len(files) == 1:
+            return files[0]
+        output_name = "temp_video.mp4" if is_video else "temp_audio.mp4"
+        merge_func = self.merge_video_segments if is_video else self.merge_audio_segments
+        return merge_func(files, temp_dir, output_name=output_name)
+    
+    def merge_video_segments(self, video_files: List[str], output_dir: str, output_name: Optional[str] = None) -> str:
         """
         合并视频片段 / Merge video segments
         
@@ -111,7 +135,9 @@ class M4SProcessor:
         try:
             output_dir = Path(output_dir)
             output_dir.mkdir(parents=True, exist_ok=True)
-            output_file = output_dir / "merged_video.mp4"
+            if not output_name:
+                output_name = self._generate_output_name("Merged_Video")
+            output_file = output_dir / output_name
             
             # 创建临时文件列表
             with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False, encoding='utf-8') as f:
@@ -161,7 +187,7 @@ class M4SProcessor:
         except Exception as e:
             raise RuntimeError(f"合并视频时出错 / Error merging video: {str(e)}\n详细信息 / Details: {traceback.format_exc()}")
     
-    def merge_audio_segments(self, audio_files: List[str], output_dir: str) -> str:
+    def merge_audio_segments(self, audio_files: List[str], output_dir: str, output_name: Optional[str] = None) -> str:
         """
         合并音频片段 / Merge audio segments
         
@@ -178,7 +204,9 @@ class M4SProcessor:
         try:
             output_dir = Path(output_dir)
             output_dir.mkdir(parents=True, exist_ok=True)
-            output_file = output_dir / "merged_audio.mp4"
+            if not output_name:
+                output_name = self._generate_output_name("Merged_Audio")
+            output_file = output_dir / output_name
             
             # 创建临时文件列表
             with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False, encoding='utf-8') as f:
@@ -228,7 +256,7 @@ class M4SProcessor:
         except Exception as e:
             raise RuntimeError(f"合并音频时出错 / Error merging audio: {str(e)}\n详细信息 / Details: {traceback.format_exc()}")
     
-    def merge_av(self, video_file: str, audio_file: str, output_dir: str, output_name: str = "final_output.mp4") -> str:
+    def merge_av(self, video_file: str, audio_file: str, output_dir: str, output_name: Optional[str] = None) -> str:
         """
         合并音视频 / Merge Audio and Video (Muxing)
         
@@ -249,6 +277,8 @@ class M4SProcessor:
             
             output_dir = Path(output_dir)
             output_dir.mkdir(parents=True, exist_ok=True)
+            if not output_name:
+                output_name = self._generate_output_name("Muxed_Output")
             output_file = output_dir / output_name
             
             # 使用 FFmpeg 合并音视频
@@ -300,29 +330,20 @@ class M4SProcessor:
             最终输出文件路径 / Final output file path
         """
         try:
-            merged_video = None
-            merged_audio = None
-            
-            # 合并视频 / Merge Video
-            if video_files:
-                merged_video = self.merge_video_segments(video_files, output_dir)
-            
-            # 合并音频 / Merge Audio
-            if audio_files:
-                merged_audio = self.merge_audio_segments(audio_files, output_dir)
-            
-            # 如果只有视频或只有音频，直接返回
-            # Return if only video or only audio exists
-            if not merged_video and merged_audio:
-                return merged_audio
-            if merged_video and not merged_audio:
-                return merged_video
-            
-            # 如果两者都有，进行混流
-            # If both exist, perform muxing
-            if merged_video and merged_audio:
-                return self.merge_av(merged_video, merged_audio, output_dir)
-            
-            raise ValueError("至少需要提供视频文件或音频文件 / At least one video or audio file is required")
+            if not video_files and not audio_files:
+                raise ValueError("至少需要提供视频文件或音频文件 / At least one video or audio file is required")
+
+            output_dir = Path(output_dir)
+            output_dir.mkdir(parents=True, exist_ok=True)
+
+            if video_files and not audio_files:
+                return self.merge_video_segments(video_files, str(output_dir))
+            if audio_files and not video_files:
+                return self.merge_audio_segments(audio_files, str(output_dir))
+
+            with tempfile.TemporaryDirectory() as temp_dir:
+                video_input = self._prepare_stream_for_mux(video_files, temp_dir, is_video=True)
+                audio_input = self._prepare_stream_for_mux(audio_files, temp_dir, is_video=False)
+                return self.merge_av(video_input, audio_input, str(output_dir))
         except Exception as e:
             raise RuntimeError(f"一键处理失败 / Processing failed: {str(e)}\n详细信息 / Details: {traceback.format_exc()}")

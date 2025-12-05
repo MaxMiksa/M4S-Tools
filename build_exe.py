@@ -24,7 +24,7 @@ def build_exe():
         'main.py',
         '--onefile',              # 打包成单个文件 / Single file
         '--windowed',             # 不显示控制台窗口 / No console window
-        '--name=M4S Merger Tools v1.1.0',      # 输出文件名 / Output filename
+        '--name=M4S Merger Tools v1.2.0',      # 输出文件名 / Output filename
         '--clean',                # 清理临时文件 / Clean cache
         '--noconfirm',            # 覆盖输出目录 / Overwrite output
         # 隐藏导入（确保这些模块被包含） / Hidden imports
@@ -58,7 +58,7 @@ def build_exe():
         print("打包完成！/ Packaging completed!")
         print("=" * 60)
         print()
-        print(f"可执行文件位置 / Executable location: {script_dir / 'dist' / 'M4S Merger Tools v1.1.0.exe'}")
+        print(f"可执行文件位置 / Executable location: {script_dir / 'dist' / 'M4S Merger Tools v1.2.0.exe'}")
         print()
         print("您可以将此文件复制到任何 Windows 电脑上运行")
         print("You can copy this file to any Windows computer to run.")

@@ -1,4 +1,4 @@
-# M4S Merger Tools v1.1.0 | [For English](https://github.com/MaxMiksa/M4S-Merger-Tools/blob/main/README-en.md)
+# M4S Merger Tools v1.2.0 | [For English](https://github.com/MaxMiksa/M4S-Merger-Tools/blob/main/README-en.md)
 
 ✅ **GUI Interface, Ready-to-Use EXE! No Manual FFmpeg Installation or Command Line Required!** ✅
 
@@ -6,13 +6,13 @@ Select files via a graphical interface to instantly merge M4S video fragments, a
 
 <div align="center">
     <!-- Left Image -->
-    <img src="Presentation%20Videos/v1.1.0/ScreenShot%201%20-%20M4S%20Merger%20Tools%20v1.1.0.png" 
-     alt="M4S Merger Tools v1.1.0 " 
+    <img src="Presentation%20Videos/v1.2.0/ScreenShot%201%20-%20M4S%20Merger%20Tools%20v1.2.0.png" 
+     alt="M4S Merger Tools v1.2.0 " 
      width="480"/>
     &nbsp;
     <!-- Right Image -->
-    <img src="Presentation%20Videos/v1.1.0/ScreenShot%202%20-%20M4S%20Merger%20Tools%20v1.1.0.png" 
-     alt="M4S Merger Tools v1.1.0 " 
+    <img src="Presentation%20Videos/v1.2.0/ScreenShot%202%20-%20M4S%20Merger%20Tools%20v1.2.0.png" 
+     alt="M4S Merger Tools v1.2.0 " 
      width="480"/>
 </div>
 
@@ -31,15 +31,15 @@ Select files via a graphical interface to instantly merge M4S video fragments, a
 
 ## Usage (Run Directly via EXE)
 
-<img src="Presentation%20Videos/v1.1.0/Presentation%20video%20-%20M4S%20Merger%20Tools%20v1.1.0.gif" 
-     alt="M4S Merger Tools v1.1.0 Demo Animation" 
+<img src="Presentation%20Videos/v1.2.0/Presentation%20video%20-%20M4S%20Merger%20Tools%20v1.2.0.gif" 
+     alt="M4S Merger Tools v1.2.0 Demo Animation" 
      width="1050"/>
 
 ### Basic Workflow
 
 1. **Select Video Files**: Click the "Select Video Files" button to choose the M4S video fragments to be merged.
 2. **Select Audio Files**: Click the "Select Audio Files" button to choose the M4S audio fragments to be merged.
-3. **Select Output Directory**: Click the "Select Output Directory" button to choose the save location for the result file.
+3. **Select Output Directory**: Click the "Select Output Directory" button to choose the save location for the result file (it defaults to your Desktop automatically if you skip this step).
 4. **Execute Processing**:
    - **Merge Video Only**: Merges video fragments only.
    - **Merge Audio Only**: Merges audio fragments only.
@@ -47,9 +47,11 @@ Select files via a graphical interface to instantly merge M4S video fragments, a
 
 ### Output File Description
 
-- `merged_video.mp4`: The merged video file.
-- `merged_audio.mp4`: The merged audio file.
-- `final_output.mp4`: The final muxed video file (generated when using one-click processing).
+All exports now carry 24-hour timestamps accurate to the second so that repeated runs never overwrite each other:
+
+- `Merged_Video_YYYY-MM-DD_HH-MM-SS.mp4`: The merged video file.
+- `Merged_Audio_YYYY-MM-DD_HH-MM-SS.mp4`: The merged audio file.
+- `Muxed_Output_YYYY-MM-DD_HH-MM-SS.mp4`: The final muxed file. Intermediate merged files are kept in a temporary directory—your output folder only receives this final MP4.
 
 ## System Requirements
 

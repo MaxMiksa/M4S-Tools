@@ -29,10 +29,10 @@ REM 清理之前的构建文件
 if exist build rmdir /s /q build
 if exist dist rmdir /s /q dist
 if exist "M4S Merger Tools v1.0.0.spec" del /q "M4S Merger Tools v1.0.0.spec"
-if exist "M4S Merger Tools v1.1.0.spec" del /q "M4S Merger Tools v1.1.0.spec"
+if exist "M4S Merger Tools v1.2.0.spec" del /q "M4S Merger Tools v1.2.0.spec"
 
 REM 使用 PyInstaller 打包
-pyinstaller --onefile --windowed --name "M4S Merger Tools v1.1.0" --clean --noconfirm --hidden-import winreg --hidden-import urllib.request --hidden-import zipfile --hidden-import tkinter --hidden-import tkinter.ttk --hidden-import tkinter.filedialog --hidden-import tkinter.messagebox --hidden-import tkinter.scrolledtext main.py
+pyinstaller --onefile --windowed --name "M4S Merger Tools v1.2.0" --clean --noconfirm --hidden-import winreg --hidden-import urllib.request --hidden-import zipfile --hidden-import tkinter --hidden-import tkinter.ttk --hidden-import tkinter.filedialog --hidden-import tkinter.messagebox --hidden-import tkinter.scrolledtext main.py
 
 if errorlevel 1 (
     echo.
@@ -55,8 +55,8 @@ echo 打包完成！
 echo Packaging completed!
 echo ========================================================
 echo.
-echo 可执行文件位置: dist\M4S Merger Tools v1.1.0.exe
-echo Executable location: dist\M4S Merger Tools v1.1.0.exe
+echo 可执行文件位置: dist\M4S Merger Tools v1.2.0.exe
+echo Executable location: dist\M4S Merger Tools v1.2.0.exe
 echo.
 echo 您可以将此文件复制到任何 Windows 电脑上运行
 echo You can copy this file to any Windows computer to run.
