@@ -7,12 +7,12 @@
 
 <div align="center">
     <!-- 左侧图片 -->
-    <img src="Presentation%20Videos/v1.2.0/ScreenShot%201%20-%20M4S%20Merger%20Tools%20v1.1.0.png" 
+    <img src="Presentation%20Videos/v1.1.0/ScreenShot%201%20-%20M4S%20Merger%20Tools%20v1.1.0.png" 
      alt="M4S Merger Tools v1.2.0 " 
      width="400"/>
     &nbsp;
     <!-- 右侧图片 -->
-    <img src="Presentation%20Videos/v1.2.0/ScreenShot%202%20-%20M4S%20Merger%20Tools%20v1.1.0.png" 
+    <img src="Presentation%20Videos/v1.1.0/ScreenShot%202%20-%20M4S%20Merger%20Tools%20v1.1.0.png" 
      alt="M4S Merger Tools v1.2.0 " 
      width="400"/>
 </div>
@@ -32,7 +32,7 @@
 
 ## 使用 （exe文件点开即用）
 
-<img src="Presentation%20Videos/v1.2.0/Presentation%20video%20-%20M4S%20Merger%20Tools%20v1.1.0.gif" 
+<img src="Presentation%20Videos/v1.1.0/Presentation%20video%20-%20M4S%20Merger%20Tools%20v1.1.0.gif" 
      alt="M4S Merger Tools v1.2.0 演示动画" 
      width="1050"/>
 
