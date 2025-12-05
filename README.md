@@ -1,4 +1,4 @@
-# M4S Merger Tools v1.3.0 | [For English](https://github.com/MaxMiksa/M4S-Merger-Tools/blob/main/README-zh.md)
+# M4S Merger Tools v1.3.0 | [中文](https://github.com/MaxMiksa/M4S-Merger-Tools/blob/main/README-zh.md)
 
 ✅ **GUI Interface, Ready-to-Use EXE! No Manual FFmpeg Installation or Command Line Required!** ✅
 
