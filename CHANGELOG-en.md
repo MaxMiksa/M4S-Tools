@@ -42,6 +42,16 @@
   - `_start_ffmpeg_check` and `_on_ffmpeg_check_finished` write Unicode strings directly, relying on the updated font to render them accurately.
   - `install_ffmpeg_dialog` now composes its layout with `CTkFrame` containers, reused color tokens, and the shared font stack so it visually matches the rest of the UI.
 
+### Feature 5: Cleaner Main UI & Dark-Theme Button Pass
+- **Summary**: Removed the largely idle main progress bar (the installer dialog keeps its own) and refreshed dark-mode buttons—“Merge Video/Audio”, both “Select Files”, and “Change Path”—so they all use the same secondary palette with proper hover feedback.
+- **Pain points solved**: The progress bar stayed at 0 most of the time while taking up space, and dark-mode buttons blended into their background with no visual feedback on hover.
+- **Change details**:
+  - Deleted the `CTkProgressBar` widget and its start/stop logic from the main window; layout closes up accordingly.
+  - Added `secondary_btn` / `secondary_hover` colors and assigned them to the select buttons, path changer, and the “merge video/audio” buttons to ensure consistent hover cues and sufficient contrast.
+- **Technical implementation**:
+  - Only the installer modal still instantiates a progress bar; `_run_task` / `_on_finish` no longer reference `self.progress_bar`.
+  - Centralized secondary colors in the `COLORS` mapping so both light and dark themes pick the right tone, keeping hover handling declarative.
+
 ## v1.2.0 – Precise Exports & Desktop-Friendly Defaults
 
 ### Feature 1: Timestamped and Traceable Outputs

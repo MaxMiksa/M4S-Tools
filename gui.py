@@ -128,7 +128,9 @@ COLORS = {
     "brand": ("#0ea5e9", "#0ea5e9"),       
     "brand_hover": ("#0284c7", "#0284c7"), 
     "terminal_bg": ("#000000", "#000000"), 
-    "terminal_fg": ("#22c55e", "#22c55e")  
+    "terminal_fg": ("#22c55e", "#22c55e"),
+    "secondary_btn": ("#cbd5e1", "#334155"),
+    "secondary_hover": ("#94a3b8", "#475569")
 }
 
 class M4SProcessorApp:
@@ -142,8 +144,8 @@ class M4SProcessorApp:
         self.t = TRANS[self.lang]
         
         self.root.title("M4S Merger GUI")
-        self.root.geometry("860x930") 
-        self.root.minsize(860, 700)
+        self.root.geometry("830x900") 
+        self.root.minsize(830, 650)
         self.root.configure(fg_color=COLORS["bg"])
         
         # 字体配置
@@ -314,16 +316,11 @@ class M4SProcessorApp:
         
         self.ui_refs["change_path_btn"] = ctk.CTkButton(
             path_frame, text="", width=110, height=32,
-            fg_color=COLORS["card_border"], hover_color="#94a3b8",
+            fg_color=COLORS["secondary_btn"], hover_color=COLORS["secondary_hover"],
             text_color=COLORS["text_main"],
             font=self.font_body, command=self.select_output_dir
         )
         self.ui_refs["change_path_btn"].pack(side="right", padx=10)
-
-        # 进度条
-        self.progress_bar = ctk.CTkProgressBar(control_frame, height=8, corner_radius=4, progress_color=COLORS["brand"], fg_color=COLORS["input_bg"])
-        self.progress_bar.pack(fill="x", pady=(0, 20))
-        self.progress_bar.set(0)
 
         # 按钮行
         action_frame = ctk.CTkFrame(control_frame, fg_color="transparent")
@@ -347,7 +344,7 @@ class M4SProcessorApp:
         # 修改：位置交换，现在 Audio 按钮在混流按钮左边
         self.ui_refs["btn_a"] = ctk.CTkButton(
             btn_box, text="", font=self.font_body, height=45, width=120, # 宽度增加到 140
-            fg_color=COLORS["input_bg"], hover_color=COLORS["card_border"], 
+            fg_color=COLORS["secondary_btn"], hover_color=COLORS["secondary_hover"], 
             text_color=COLORS["text_main"],
             command=self.merge_audio
         )
@@ -356,7 +353,7 @@ class M4SProcessorApp:
         # 修改：位置交换，现在 Video 按钮在最左边 (视觉上)
         self.ui_refs["btn_v"] = ctk.CTkButton(
             btn_box, text="", font=self.font_body, height=45, width=120, # 宽度增加到 140
-            fg_color=COLORS["input_bg"], hover_color=COLORS["card_border"], 
+            fg_color=COLORS["secondary_btn"], hover_color=COLORS["secondary_hover"], 
             text_color=COLORS["text_main"],
             command=self.merge_video
         )
@@ -385,7 +382,7 @@ class M4SProcessorApp:
         ).pack(side="right")
         
         # 列表
-        list_frame = ctk.CTkScrollableFrame(container, height=90, fg_color="transparent", scrollbar_button_color=COLORS["card_border"])
+        list_frame = ctk.CTkScrollableFrame(container, height=70, fg_color="transparent", scrollbar_button_color=COLORS["card_border"])
         list_frame.pack(fill="both", expand=True, padx=5)
         
         cmd_add = self.select_video_files if type_key == "video" else self.select_audio_files
@@ -393,10 +390,10 @@ class M4SProcessorApp:
         else: self.audio_list_ui = list_frame
             
         bot = ctk.CTkFrame(container, fg_color="transparent")
-        bot.pack(fill="x", padx=15, pady=15)
+        bot.pack(fill="x", padx=15, pady=10)
         
         btn = ctk.CTkButton(
-            bot, text="", fg_color=COLORS["card_border"], hover_color="#94a3b8", 
+            bot, text="", fg_color=COLORS["secondary_btn"], hover_color=COLORS["secondary_hover"], 
             text_color=COLORS["text_main"],
             height=36, font=self.font_body, command=cmd_add
         )
@@ -406,7 +403,7 @@ class M4SProcessorApp:
     def _show_placeholder(self, frame, cmd):
         for w in frame.winfo_children(): w.destroy()
         wrap = ctk.CTkFrame(frame, fg_color="transparent")
-        wrap.pack(expand=True, fill="both", pady=(90,0))
+        wrap.pack(expand=True, fill="both", pady=(65,0))
         ctk.CTkButton(
             wrap, text=self.t["placeholder"], fg_color="transparent", 
             text_color=COLORS["text_body"], hover=False, font=self.font_body, command=cmd
@@ -522,7 +519,6 @@ class M4SProcessorApp:
             return
 
         self.is_processing = True
-        self.progress_bar.start()
         self.log(f"{self.t['processing']} ({name_key})")
         
         def run():
@@ -535,8 +531,6 @@ class M4SProcessorApp:
 
     def _on_finish(self, success, msg):
         self.is_processing = False
-        self.progress_bar.stop()
-        self.progress_bar.set(0)
         if success:
             self.log(f"{self.t['success']}! {msg}")
             messagebox.showinfo(self.t["success"], f"{self.t['saved']}\n{msg}")
