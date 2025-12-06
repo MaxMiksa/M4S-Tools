@@ -27,12 +27,12 @@ Select files via a graphical interface to instantly merge M4S video fragments, a
     <!-- Left Image -->
     <img src="Presentation/v1.3.0/Presentation%20Pic%20-%201.png" 
          alt="M4S Merger Tools v1.3.0 " 
-         width="420"/>
+         width="400"/>
     &nbsp;
     <!-- Right Image -->
     <img src="Presentation/v1.3.0/Presentation%20Pic%20-%202.png" 
          alt="M4S Merger Tools v1.3.0 " 
-         width="420"/>
+         width="400"/>
 </div>
 
 ### Basic Workflow
