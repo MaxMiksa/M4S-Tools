@@ -1,6 +1,6 @@
 # M4S 合并工具 v1.3.0 | [For English](https://github.com/MaxMiksa/M4S-Merger-Tools/blob/main/README.md)
 
-![Python](https://img.shields.io/badge/Python-3.7%2B-blue) ![customtkinter](https://img.shields.io/badge/customtkinter-%E2%89%A55.2.0-2b8cbe) ![Pillow](https://img.shields.io/badge/Pillow-%E2%89%A510.0.0-1f77b4) ![PyInstaller](https://img.shields.io/badge/PyInstaller-%E2%89%A56.0.0-e34f26)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg) ![Python](https://img.shields.io/badge/Python-3.7%2B-blue) ![customtkinter](https://img.shields.io/badge/customtkinter-%E2%89%A55.2.0-2b8cbe) ![Pillow](https://img.shields.io/badge/Pillow-%E2%89%A510.0.0-1f77b4) ![PyInstaller](https://img.shields.io/badge/PyInstaller-%E2%89%A56.0.0-e34f26)
 
 ✅ **图形化界面 | 下载后直接使用 | 无需使用cmd | 无需预安装FFmpeg | 免费**  
 ✅ **视频合并 | 音频合并 | 音视频合并 (混流)**   
