@@ -7,7 +7,7 @@
 ✅ **.M4S | .MP4 | .MP3**  
 
 🌐 **Online** Version (Click-to-Run) ➡️ Web Counterpart | https://github.com/MaxMiksa/M4S-Merger-Tools-Web  
-🖥️ **Offline** Version (10x Faster) ➡️ This Repo | https://github.com/MaxMiksa/M4S-Merger-Tools
+🖥️ **Offline** Version (Portable) ➡️ This Repo | https://github.com/MaxMiksa/M4S-Merger-Tools
 
 <img src="Presentation/v1.3.0/Presentation%20Video-%20v1.3.0.gif" 
      alt="M4S Merger Tools v1.3.0 " 
