@@ -1,6 +1,6 @@
 # M4S Merger Tools v1.3.0 | [中文](https://github.com/MaxMiksa/M4S-Merger-Tools/blob/main/README-zh.md)
 
-✅ **Graphical User Interface (GUI) | Portable (Download & Run) | No Command Line (CLI) Required | Built-in FFmpeg | Free**  
+✅ **Graphical User Interface (GUI) | Portable (Download & Run) | No Command Line (CLI) | Built-in FFmpeg | Free**  
 ✅ **Video Merging | Audio Merging | Audio & Video Muxing**  
 ✅ **.M4S | .MP4 | .MP3**  
 
