@@ -1,4 +1,4 @@
-# M4S Merger Tools v1.3.0 | [中文](https://github.com/MaxMiksa/M4S-Merger-Tools/blob/main/README-zh.md)
+# M4S Merger Tools | [中文](https://github.com/MaxMiksa/M4S-Merger-Tools/blob/main/README-zh.md)
 
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg) ![Python](https://img.shields.io/badge/Python-3.7%2B-blue) ![customtkinter](https://img.shields.io/badge/customtkinter-%E2%89%A55.2.0-2b8cbe) ![Pillow](https://img.shields.io/badge/Pillow-%E2%89%A510.0.0-1f77b4) ![PyInstaller](https://img.shields.io/badge/PyInstaller-%E2%89%A56.0.0-e34f26)
 
